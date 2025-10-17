@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edy - Deals & Price Tracker Combined</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: rgba(0, 123, 255, 0.3); 
+            --primary-dark: #3f1e58; 
+            --accent-color: #ff9900;
+            --text-dark: #333;
+            --text-light: #555;
+            --bg-light: #f7f7f7;
+            --card-border: #e0e0e0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #fff;
+            color: var(--text-dark);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+    
+        .edy-header {
+            background-color: #fff;
+            border-bottom: 1px solid var(--card-border);
+            padding: 10px 5%;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .logo-text {
+            font-size: 1.5em;
+            font-weight: 900;
+            color: var(--primary-color);
+        }
+
+        .top-nav a {
+            margin: 0 10px;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .top-nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.85em;
+        }
+
+        .language i {
+            color: #008000; 
+        }
+
+        .install-btn {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .login-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        /* --- 2. MAIN DEALS PAGE LAYOUT --- */
+        .deals-page-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 30px 20px 20px; /* Reduced bottom padding to remove excessive space */
+        }
+
+        .page-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary-dark);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1em;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .deals-filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 5px;
+            font-size: 0.9em;
+        }
+
+        .deal-tabs a {
+            padding: 5px 15px;
+            margin-right: 10px;
+            border-radius: 4px;
+            color: var(--text-light);
+            border: 1px solid transparent;
+        }
+
+        .deal-tabs a.active {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .sort-by select {
+            padding: 5px 10px;
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+        }
+
+        /* Main Layout: Sidebar & Grid */
+        .deals-layout {
+            display: flex;
+            gap: 30px;
+        }
+
+
+        /* --- Sidebar Filter --- */
+        .sidebar-filter {
+            width: 250px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-filter h3 {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 30px;
+        }
+
+        .filter-group h4 {
+            font-size: 1.1em;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .filter-group li {
+            padding: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .filter-group li a:hover {
+            color: var(--primary-color);
+        }
+
+
+        /* --- Product Listing Grid --- */
+        .product-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .product-card {
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image-container {
+            position: relative;
+            text-align: center;
+            margin-bottom: 10px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .product-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            background-color: var(--bg-light);
+        }
+
+        .lowest-ever-tag {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: #008000; /* Green tag */
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px 0 0 0;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .product-info {
+            font-size: 0.9em;
+        }
+
+        .amazon-icon {
+            color: var(--accent-color);
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .product-description {
+            margin: 5px 0 15px;
+            line-height: 1.3;
+            height: 35px; /* Fixed height for two lines */
+            overflow: hidden;
+            color: var(--text-dark);
+        }
+
+        .price-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-weight: bold;
+            border-top: 1px dashed var(--card-border);
+            padding-top: 10px;
+        }
+
+        .current-price {
+            font-size: 1.4em;
+            color: #e31a13; /* Red color for current deal price */
+        }
+
+        .usual-price {
+            font-size: 0.8em;
+            color: var(--text-light);
+            text-decoration: line-through;
+            font-weight: normal;
+        }
+
+        .user-score {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            text-align: center;
+        }
+
+        .user-score span {
+            display: block;
+            font-size: 0.6em;
+            font-weight: normal;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+
+        /* --- 3. BOTTOM FLOATING CTA BAR --- */
+        .bottom-cta-float {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 5%;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .bottom-cta-float p {
+            margin: 0;
+            max-width: 600px;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .bottom-cta-float i {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+
+        .enable-savings-btn {
+            background-color: #fff;
+            color: var(--primary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .enable-savings-btn:hover {
+            background-color: var(--bg-light);
+        }
+
+
+        /* --- Media Queries for Responsiveness --- */
+        @media (max-width: 900px) {
+            .deals-layout {
+                flex-direction: column;
+            }
+
+            .sidebar-filter {
+                width: 100%;
+                margin-bottom: 20px;
+                padding: 15px;
+                border: 1px solid var(--card-border);
+                border-radius: 8px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+
+            .bottom-cta-float {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .enable-savings-btn {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .edy-header {
+                padding: 10px 20px;
+            }
+            
+            .top-nav, .install-btn {
+                display: none;
+            }
+            
+            .header-content {
+                justify-content: space-around;
+                gap: 10px;
+            }
+
+            .deals-filter-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="edy-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <span class="logo-text">edy</span>
+            </div>
+            <nav class="top-nav">
+                <a href="#">Hot Deals</a>
+                <a href="#">Spend Lens</a>
+                <a href="#">Price Alert</a>
+                <a href="#">Ride Compare</a>
+            </nav>
+            <div class="user-actions">
+                <a href="#">Refer & Earn</a>
+                <span class="language"><i class="fas fa-flag"></i>&nbsp;IN</span>
+                <a href="#" class="install-btn"><i class="fas fa-download"></i>&nbsp;Install, it's free</a>
+                <button class="login-btn">Login</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="deals-page-container">
+        <h1 class="page-title">BBD 2025 verified Deals</h1>
+        <p class="page-subtitle">Deals that passed the scanner test.</p>
+
+        <div class="deals-filter-bar">
+            <div class="deal-tabs">
+                <a href="#" class="tab active">Deals under ₹99</a>
+                <a href="#" class="tab">Electronics & Mobile</a>
+            </div>
+            <div class="sort-by">
+                <span>Sort By:</span>
+                <select>
+                    <option>Popularity</option>
+                    <option>Lowest Ever Price</option>
+                    <option>Newest</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="deals-layout">
+            
+            <aside class="sidebar-filter">
+                <h3>Filter</h3>
+
+                <div class="filter-group">
+                    <h4>Electronics & Mobile</h4>
+                    <ul>
+                        <li><a href="#">Headphones</a></li>
+                        <li><a href="#">Televisions</a></li>
+                        <li><a href="#">Smartphones</a></li>
+                        <li><a href="#">Bluetooth Speakers</a></li>
+                        <li><a href="#">Power Banks</a></li>
+                        <li><a href="#">Laptops</a></li>
+                        <li><a href="#">Desktops</a></li>
+                        <li><a href="#">Tables</a></li>
+                        <li><a href="#">Smartwatches</a></li>
+                    </ul>
+                </div>
+
+                <div class="filter-group">
+                    <h4>Home & Kitchen</h4>
+                    <ul>
+                        <li><a href="#">Cookware</a></li>
+                        <li><a href="#">Appliances</a></li>
+                    </ul>
+                </div>
+                <div class="filter-group">
+                    <h4>Fashion</h4>
+                    <ul>
+                        <li><a href="#">Footwear</a></li>
+                        <li><a href="#">Jewellery</a></li>
+                        <li><a href="#">Women's Ethnic Wear</a></li>
+                        <li><a href="#">Men's Ethnic Wear</a></li>
+                        <li><a href="#">Men's Wear</a></li>
+                        <li><a href="#">Women's Western Wear</a></li>
+                        <li><a href="#">Accessories</a></li>
+                </div>
+                <div class="filter-group">
+                    <h4>Health & Wellness</h4>
+                    <ul>
+                        <li><a href="#">Fitness Equipment</a></li>
+                        <li><a href="#">Personal Care</a></li>
+                    </ul>
+                </div>
+                <div class="filter-group">
+                    <h4>Furniture</h4>
+                    <ul>
+                        <li><a href="#">Water purifiers</a></li>
+                        <li><a href="#">Air conditionerd</a></li>
+                        <li><a href="#">Bedding</a></li>
+                        <li><a href="#">Mixer Grinders</a></li>
+                        <li><a href="#">Air Fryers</a></li>
+                        <li><a href="#">Micrrowaves</a></li>
+                        <li><a href="#">Home decor</a></li>
+                    </ul>
+                </div>
+                <div class="filter-group">
+                    <h4>Makeup-Products</h4>
+                    <ul>
+                        <li><a href="#">Hair Care</a></li>
+                        <li><a href="#">Fragnces</a></li>
+                        <li><a href="#">Skin care</a></li>
+                        <li><a href="#">Grooming kits</a></li>
+                    </ul>
+                
+            </aside>
+            <section class="product-grid" id="product-grid">
+            </section>
+        </div>
+    </main>
+    <div class="bottom-cta-float">
+        <p><i class="fas fa-lightbulb"></i> Meet the AI that's obsessed with saving you money. We track prices, find deals, and apply coupons so you can shop with confidence, every single time.</p>
+        <button class="enable-savings-btn">Enable savings</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
